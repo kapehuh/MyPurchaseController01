@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">MyPurchaseController01</string>
+    <string name="search_by_code">Search by code</string>
+</resources>
