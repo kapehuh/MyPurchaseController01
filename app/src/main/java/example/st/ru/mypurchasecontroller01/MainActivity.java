@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.View;
 import android.widget.TextView;
 
@@ -59,9 +60,14 @@ public class MainActivity extends Activity {
 
         FirebaseFirestore db=FirebaseFirestore.getInstance();
         CollectionReference frDb=db.collection("goods");
-        Query goodesBarcode = frDb.whereEqualTo("barcode",barcodeResult);
+        Barcode barcode2= null;
+        if (data != null) {
+            barcode2 = data.getParcelableExtra("barcode");
+        }
+        Query goodsBarcode = frDb.whereEqualTo("barcode", barcode2);
+        productInfo.setText(""+goodsBarcode);
+
 
         super.onActivityResult(requestCode, resultCode, data);
-
     }
 }
