@@ -1,31 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:padding="16dp">
 
     <TextView
         android:id="@+id/barcode_result"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center_horizontal" />
+        android:layout_height="30dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:shadowColor="@android:color/black"
+        android:textColor="@android:color/black" />
 
     <TextView
         android:id="@+id/product_info"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="200dp"
         android:layout_below="@+id/barcode_result"
         android:layout_centerHorizontal="true"
-        android:layout_gravity="bottom|center_horizontal" />
+        android:layout_gravity="bottom|center_horizontal"
+        android:shadowColor="@android:color/black"
+        android:textColor="@android:color/black" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="50dp"
+        android:layout_height="48dp"
+        android:layout_alignTop="@+id/search_by_code"
+        android:layout_toEndOf="@+id/search_by_code"
+        android:foreground="@android:drawable/ic_search_category_default"
+        android:visibility="visible"
+        app:srcCompat="@android:color/holo_purple" />
 
     <Button
         android:id="@+id/search_by_code"
-        android:layout_width="wrap_content"
+        android:layout_width="158dp"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_gravity="bottom|center_horizontal"
+        android:background="#dac4e4"
         android:onClick="scanBarcode"
-        android:text="@string/search_by_code" />
+        android:text="@string/search_by_code"
+        android:textStyle="italic" />
 
 </RelativeLayout>

@@ -57,30 +57,83 @@ public class MainActivity extends Activity {
             if (resultCode== CommonStatusCodes.SUCCESS){
                 if (data!=null){
                     Barcode barcode=data.getParcelableExtra("barcode");
+
+                    DocumentReference docRef=db.collection("goods").document(barcode.rawValue);
+                    docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()){
+                                DocumentSnapshot document=task.getResult();
+                                if (document.exists()){
+                                    productInfo.setText("Product info: "+document.getData());
+                                }else {
+                                    Log.d(TAG, "No such document");
+                                }
+                            }else {
+                                Log.w(TAG, "Get failed with ", task.getException());
+                            }
+                        }
+                    });
+
+
                     barcodeResult.setText("Barcode : "+barcode.displayValue);
-                    //productInfo.setText((CharSequence) FBdata.collection("goods").document(""+barcodeResult));
                 }
             }else {
                 barcodeResult.setText("No barcode found");
             }
         }
 
-        db.collection("goods")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()){
-                            for (QueryDocumentSnapshot document: task.getResult()){
-                                Log.d(TAG, document.getId()+"=> "+document.getData());
-                                productInfo.setText("Product info : "+document.getData());
-                            }
-                        }else {
-                            Log.w(TAG, "Error getting documents.", task.getException());
-                        }
-                    }
-                });
+        // ====================================================trying to receive data from db +
+//        try{
+//            db.collection("goods")
+//                    .get()
+//                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                        @Override
+//                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                            if (task.isSuccessful()){
+//                                for (QueryDocumentSnapshot document: task.getResult()){
+//                                    Log.d(TAG, document.getId()+"=> "+document.getData());
+//                                    productInfo.setText("Product info : "+document.getData().toString());
+//                                }
+//                            }else {
+//                                Log.w(TAG, "Error getting documents.", task.getException());
+//                            }
+//                        }
+//                    });
+//        }catch (Exception e){
+//            e.printStackTrace();
+//            productInfo.setText("Product not found");
+//        }
+        // ======================================================= N 2
+//        try{
+//        }catch (Exception e){
+//            e.printStackTrace();
+//            productInfo.setText("Product not found");
+//        }
+        // ========================================================== N 3
+//        try {
+//            CollectionReference colRef = db.collection("goods");
+//            final Query query;
+//            if (data != null) {
+//                query = colRef.whereEqualTo("barcode", data.getParcelableExtra("barcode"));
+//            }
+//            colRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                @Override
+//                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                    if (task.isSuccessful()) {
+//                        QuerySnapshot querySnapshot = task.getResult();
+//                        if (querySnapshot.isEmpty()) {
+//                            Log.w(TAG, "Get failed with ", task.getException());
+//                        } else {
+//                            productInfo.setText("Product info: " + querySnapshot.getDocuments());
+//                            Log.d(TAG, "No such document");
+//                        }
+//                    }
+//                }
+//            });
+            //==================================================================================
 
-        super.onActivityResult(requestCode, resultCode, data);
+
+            super.onActivityResult(requestCode, resultCode, data);
     }
 }

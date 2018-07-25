@@ -84,7 +84,6 @@ public class ScanBarcodeActivity extends Activity {
                     setResult(CommonStatusCodes.SUCCESS, intent);
                     finish();
                 }
-
             }
         });
     }
