@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">MyPurchaseController01</string>
     <string name="search_by_code">Search by code</string>
+    <string name="button2">Стоимость изменилась</string>
+    <string name="checkBox2">Сообщить об изменении цены</string>
+    <string name="shopView">Пятёрочка</string>
+    <string name="shopView2">Лента</string>
+    <string name="shopView3">Окей</string>
+    <string name="imageView">Продукт_Фото</string>
 </resources>
