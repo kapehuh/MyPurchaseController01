@@ -8,8 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
+import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -20,81 +19,91 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
+import example.st.ru.mypurchasecontroller01.Naslednik;
 import example.st.ru.mypurchasecontroller01.R;
 import example.st.ru.mypurchasecontroller01.ScanBarcodeActivity;
-import example.st.ru.mypurchasecontroller01.model.Goods;
+import example.st.ru.mypurchasecontroller01.model.Item;
 
 import static android.content.ContentValues.TAG;
+import static example.st.ru.mypurchasecontroller01.Naslednik.brc;
 
 
-public class MyRequestAdapter extends ArrayAdapter<Goods> {
+public class MyRequestAdapter extends BaseAdapter {
+        private Context context;
+        //private int[] my_prices;
+        private ArrayList<Item> items;
 
-    public MyRequestAdapter(@NonNull Context context, int resource, @NonNull List<Goods> objects) {
-        super(context, resource, objects);
-        FirebaseFirestore db=FirebaseFirestore.getInstance();
-        Intent data = null;
+        public MyRequestAdapter(Context context, final ArrayList<Item> items) {
+            this.context=context;
+            this.items =items;
 
-        ScanBarcodeActivity scanBarcodeActivity=new ScanBarcodeActivity();
-        scanBarcodeActivity.getIntent().getParcelableExtra("barcode");
-        Barcode barcode=data.getParcelableExtra("barcode");
+            FirebaseFirestore db=FirebaseFirestore.getInstance();
 
-        DocumentReference docRef=db.collection("goods").document(barcode.rawValue);
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()){
-                    DocumentSnapshot document=task.getResult();
-                    if (document.exists()){
-                        //TODO
+                DocumentReference docRef=db.collection("goods").document(brc);
+                docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()){
+                            DocumentSnapshot document=task.getResult();
+                            if (document.exists()){
 
-                    }else {
-                        Log.d(TAG, "No such document");
+                                Object a=document.get("prices");
+
+                                //items.add(a);
+
+//                                for (int i=0;i<price_info.length();i++){
+//                                    items.add(i,price_info);
+//                                }
+
+                            }else {
+                                Log.d(TAG, "No such document");
+                            }
+                        }else {
+                            Log.w(TAG, "Get failed with ", task.getException());
+                        }
                     }
-                }else {
-                    Log.w(TAG, "Get failed with ", task.getException());
-                }
+                });
+
+        }
+
+        @Override
+        public int getCount() {
+            return items.size();
+        }
+
+        @Nullable
+        @Override
+        public Object getItem(int position) {
+            return items.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return (position);
+        }
+
+        @NonNull
+        @Override
+        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            if(convertView==null){
+                convertView=LayoutInflater.from(context).inflate(R.layout.request_data,parent,false);
             }
-        });
-    }
 
-    @NonNull
-    @Override
-    public Context getContext() {
-        return super.getContext();
-    }
+            Item currentGoods=(Item) getItem(position);
 
-    @Override
-    public int getCount() {
-        return super.getCount();
-    }
+            TextView iv_price=(TextView)convertView.findViewById(R.id.iv_item_price);
+            TextView iv_shop=(TextView)convertView.findViewById(R.id.iv_item_shop);
 
-    @Override
-    public long getItemId(int position) {
-        return super.getItemId(position);
-    }
+            if (currentGoods != null) {
+                iv_price.setText(currentGoods.getItem_price());
+            }
+            if (currentGoods != null) {
+                iv_shop.setText(currentGoods.getItem_shop());
+            }
 
-    @NonNull
-    @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        Goods goods=getItem(position);
-        if (convertView==null){
-            convertView=LayoutInflater.from(getContext()).inflate(R.layout.request_data, parent, false);
+
+            return convertView;
         }
-
-        TextView name=(TextView) convertView.findViewById(R.id.text_view_item_name);
-        TextView price=(TextView) convertView.findViewById(R.id.text_view_item_price);
-        ImageView img=(ImageView) convertView.findViewById(R.id.ivIcon);
-
-
-        if (goods != null) {
-            name.setText(goods.getItemName());
-            price.setText(goods.getItemPrice());
-            img.setImageResource(goods.getImgResId());
-        }
-
-
-        return super.getView(position, convertView, parent);
     }
-}

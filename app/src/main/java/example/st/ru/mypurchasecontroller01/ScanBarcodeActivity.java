@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -27,15 +28,18 @@ public class ScanBarcodeActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan_barcode);
 
-        cameraPreview = (SurfaceView) findViewById(R.id.camera_preview);
+        cameraPreview = findViewById(R.id.camera_preview);
         createCameraSource();
     }
 
     private void createCameraSource() {
+
         BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(this).build();
+
         final CameraSource cameraSource = new CameraSource.Builder(this, barcodeDetector)
                 .setAutoFocusEnabled(true)
-                .setRequestedPreviewSize(1600, 1024)
+                //.setRequestedPreviewSize(1600, 1024)
+                .setRequestedPreviewSize(640, 480)
                 .build();
 
         cameraPreview.getHolder().addCallback(new SurfaceHolder.Callback() {
@@ -72,7 +76,6 @@ public class ScanBarcodeActivity extends Activity {
         barcodeDetector.setProcessor(new Detector.Processor<Barcode>() {
             @Override
             public void release() {
-
             }
 
             @Override

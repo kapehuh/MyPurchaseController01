@@ -35,7 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import example.st.ru.mypurchasecontroller01.adapter.MyRequestAdapter;
-import example.st.ru.mypurchasecontroller01.model.Goods;
+import example.st.ru.mypurchasecontroller01.model.Item;
 
 import static android.content.ContentValues.TAG;
 
@@ -44,6 +44,7 @@ public class MainActivity extends Activity {
     TextView productInfo;
     ListView listView;
 
+    int[] img_src=new int[]{R.drawable.logo_5ka, R.drawable.lenta, R.drawable.stock_8_z066};
 
     private FirebaseFirestore db=FirebaseFirestore.getInstance();
 
@@ -52,20 +53,16 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        barcodeResult=(TextView)findViewById(R.id.barcode_result2);
+        //barcodeResult=(TextView)findViewById(R.id.barcode_result2);
         //productInfo=(TextView)findViewById(R.id.product_info);
-        listView=(ListView)findViewById(R.id.list_dynamic);
-
+        //listView=(ListView)findViewById(R.id.list_dynamic);
     }
-
 
     //add event barcode button
     public void scanBarcode(View v) {
         Intent intent=new Intent(this, ScanBarcodeActivity.class);
         startActivityForResult(intent,0);
     }
-
-
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -76,30 +73,16 @@ public class MainActivity extends Activity {
                 if (data!=null){
                     Barcode barcode=data.getParcelableExtra("barcode");
 
-                    ArrayList<Goods> arrayList= new ArrayList<>();
-                    MyRequestAdapter adapter=new MyRequestAdapter(this,0, arrayList);
-                    ListView listView=(ListView)findViewById(R.id.list_dynamic);
-                    listView.setAdapter(adapter);
+                    String iyo=barcode.rawValue;
 
+                    Naslednik naslednik=new Naslednik(iyo);
+                    naslednik.setBrc(iyo);
 
+                    ArrayList<Item> arrayOfPrices=new ArrayList<>();
+                    MyRequestAdapter adapter=new MyRequestAdapter(this, arrayOfPrices);
+                    ListView itemsListView=findViewById(R.id.list_dynamic);
+                    itemsListView.setAdapter(adapter);
 
-                    DocumentReference docRef=db.collection("goods").document(barcode.rawValue);
-                    docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if (task.isSuccessful()){
-                                DocumentSnapshot document=task.getResult();
-                                if (document.exists()){
-                                    //TODO
-                                    barcodeResult.setText("123"+document.get("productname"));
-                                }else {
-                                    Log.d(TAG, "No such document");
-                                }
-                            }else {
-                                Log.w(TAG, "Get failed with ", task.getException());
-                            }
-                        }
-                    });
                     //barcodeResult.setText("Product barcode "+barcode.displayValue);
                 }
             }else {
